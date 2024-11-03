@@ -9,6 +9,8 @@ public class Main {
     private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
+        readAllStudents("estudiants");
+
         int option;
         do {
             System.out.println("Menú Principal:");
@@ -45,6 +47,8 @@ public class Main {
                     System.out.println("Opció no vàlida.");
             }
         } while (option != 6);
+
+        System.out.println("Sortint del programa.");
     }
 
     private static void readAllStudents(String folderPath) {
@@ -53,16 +57,12 @@ public class Main {
 
         if (listOfFiles != null) {
             for (File file : listOfFiles) {
-                try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-                    String name = br.readLine();
-                    String placeOfOrigin = br.readLine();
-                    int maritalStatus = Integer.parseInt(br.readLine());
-                    Person person = new Person(name, placeOfOrigin, maritalStatus);
-                    BinaryTree tree = new BinaryTree();
-                    tree.addNode(person, "");
+                BinaryTree tree = new BinaryTree(file.getPath());
+                if (tree.getName() != null) {
                     students.addStudent(tree);
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    System.out.println("Alumne carregat des del fitxer: " + file.getName());
+                    System.out.println("Arbre binari estructurat:");
+                    tree.displayTree();
                 }
             }
         }
@@ -72,6 +72,7 @@ public class Main {
         for (String name : students.getAllStudentsName()) {
             BinaryTree studentTree = students.getStudent(name);
             studentTree.preorderSave();
+            System.out.println("Alumne guardat al fitxer: " + name);
         }
     }
 
@@ -79,8 +80,9 @@ public class Main {
         if (students.getAllStudentsName().isEmpty()) {
             System.out.println("No hi ha estudiants.");
         } else {
+            System.out.println("Mostrem els noms dels estudiants:");
             for (String name : students.getAllStudentsName()) {
-                System.out.println(name);
+                System.out.println("\t" + name);
             }
         }
     }
@@ -144,13 +146,16 @@ public class Main {
     }
 
     private static void mostrarInforme() {
-        System.out.print("Introdueix la ciutat on ha nascut l'estudiant: ");
+        System.out.print("Indica la ciutat de naixement a buscar: ");
         String birthCity = scanner.nextLine();
-        System.out.print("Introdueix la ciutat de procedència de la família: ");
+        System.out.print("Indica la ciutat de procedència a buscar: ");
         String familyCity = scanner.nextLine();
 
         int countBirthCity = 0;
         int countFamilyCity = 0;
+        int countSingleParent = 0;
+        int countDivorcedParents = 0;
+        int countGrandParents = 0;
 
         for (String name : students.getAllStudentsName()) {
             BinaryTree studentTree = students.getStudent(name);
@@ -160,10 +165,22 @@ public class Main {
             if (studentTree.isDescentFrom(familyCity)) {
                 countFamilyCity++;
             }
+            if (studentTree.howManyParents() == 1) {
+                countSingleParent++;
+            }
+            if (!studentTree.marriedParents()) {
+                countDivorcedParents++;
+            }
+            if (studentTree.howManyGrandParents() >= 2) {
+                countGrandParents++;
+            }
         }
 
-        System.out.println("Informe:");
-        System.out.println("Estudiants nascuts a " + birthCity + ": " + countBirthCity);
-        System.out.println("Estudiants amb família de " + familyCity + ": " + countFamilyCity);
+        System.out.println("Nombre d'alumnes totals: " + students.getAllStudentsName().size());
+        System.out.println("Hi ha " + countBirthCity + " alumnes de " + birthCity);
+        System.out.println("Hi ha " + countFamilyCity + " alumnes descendents de " + familyCity);
+        System.out.println("Hi ha " + countSingleParent + " alumnes amb un únic progenitor.");
+        System.out.println("Hi ha " + countDivorcedParents + " alumnes amb progenitors no casats.");
+        System.out.println("Hi ha " + countGrandParents + " alumnes amb dos o més avis o àvies.");
     }
 }

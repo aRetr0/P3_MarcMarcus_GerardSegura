@@ -17,13 +17,13 @@ public class BinaryTree {
     }
 
     public String getName() {
-        return root.info.getName();
+        return root != null ? root.info.getName() : null;
     }
 
     private NodeA preorderLoad(BufferedReader bur) {
         try {
             String line = bur.readLine();
-            if (line == null) {
+            if (line == null || line.trim().isEmpty() || line.equals("*dead")) {
                 return null;
             }
             Person person = new Person(line);
@@ -65,11 +65,7 @@ public class BinaryTree {
 
     public void removePerson(String name) {
         if (root != null && !root.info.getName().equals(name)) {
-            if (root.info.getName().compareTo(name) > 0) {
-                root.left.removePersonRecursive(name);
-            } else {
-                root.right.removePersonRecursive(name);
-            }
+            root.removePersonRecursive(name);
         }
     }
 
@@ -90,11 +86,7 @@ public class BinaryTree {
     }
 
     public boolean marriedParents() {
-        return root != null &&
-                root.left != null &&
-                root.right != null &&
-                root.left.info.getMaritalStatus() == 2 &&
-                root.right.info.getMaritalStatus() == 2;
+        return root != null && root.left != null && root.right != null && root.left.info.getMaritalStatus() == 2 && root.right.info.getMaritalStatus() == 2;
     }
 
     private class NodeA {
@@ -118,9 +110,15 @@ public class BinaryTree {
                 buw.newLine();
                 if (left != null) {
                     left.preorderSaveRecursive(buw);
+                } else {
+                    buw.write("*dead");
+                    buw.newLine();
                 }
                 if (right != null) {
                     right.preorderSaveRecursive(buw);
+                } else {
+                    buw.write("*dead");
+                    buw.newLine();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -157,16 +155,20 @@ public class BinaryTree {
             if (right != null) {
                 right.displayTreeRecursive(level + 1);
             }
-            for (int i = 0; i < level; i++) {
-                System.out.print("\t");
-            }
-            System.out.println(info);
+            printIndent(level);
+            System.out.println(info.getName());
             if (left != null) {
                 left.displayTreeRecursive(level + 1);
             }
         }
 
-        private void removePersonRecursive(String name) {
+        private void printIndent(int level) {
+            for (int i = 0; i < level; i++) {
+                System.out.print("\t");
+            }
+        }
+
+        private boolean removePersonRecursive(String name) {
             if (left != null && left.info.getName().equals(name)) {
                 if (left.left == null && left.right == null) {
                     left = null;
@@ -182,6 +184,7 @@ public class BinaryTree {
                     left.info = temp.info;
                     left.right.removePersonRecursive(temp.info.getName());
                 }
+                return true;
             } else if (right != null && right.info.getName().equals(name)) {
                 if (right.left == null && right.right == null) {
                     right = null;
@@ -197,11 +200,13 @@ public class BinaryTree {
                     right.info = temp.info;
                     right.right.removePersonRecursive(temp.info.getName());
                 }
+                return true;
             } else if (left != null && left.info.getName().compareTo(name) > 0) {
-                left.removePersonRecursive(name);
+                return left.removePersonRecursive(name);
             } else if (right != null && right.info.getName().compareTo(name) < 0) {
-                right.removePersonRecursive(name);
+                return right.removePersonRecursive(name);
             }
+            return false;
         }
 
         private boolean isDescentFromRecursive(String place) {

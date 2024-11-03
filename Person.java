@@ -1,8 +1,8 @@
 public class Person {
-    public final int WIDOWED = 0;
-    public final int DIVORCED = 1;
-    public final int MARRIED = 2;
-    public final int SINGLE = 3;
+    public static final int WIDOWED = 0;
+    public static final int DIVORCED = 1;
+    public static final int MARRIED = 2;
+    public static final int SINGLE = 3;
 
     private int maritalStatus;
     private String placeOfOrigin;
@@ -15,10 +15,18 @@ public class Person {
     }
 
     public Person(String formattedString) {
+        if (formattedString == null || formattedString.isEmpty()) {
+            throw new IllegalArgumentException("Input string is null or empty");
+        }
+
         String[] parts = formattedString.split(", ");
+        if (parts.length < 3) {
+            throw new IllegalArgumentException("Input string does not have the correct format");
+        }
+
         this.name = parts[0].split(": ")[1];
         this.placeOfOrigin = parts[1].split(": ")[1];
-        String maritalStatusString = parts[2].split(": ")[1];
+        String maritalStatusString = parts[2].split(": ")[1].replace(";", "").trim();
         switch (maritalStatusString.toLowerCase()) {
             case "widowed":
                 this.maritalStatus = WIDOWED;
@@ -64,6 +72,7 @@ public class Person {
         }
     }
 
+    @Override
     public String toString() {
         return "Name: " + name + ", Place of Origin: " + placeOfOrigin + ", Marital Status: " + getMaritalStatusString();
     }
