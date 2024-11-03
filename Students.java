@@ -1,3 +1,4 @@
+import java.io.File;
 import java.util.ArrayList;
 
 public class Students {
@@ -9,13 +10,15 @@ public class Students {
 
     public void addStudent(BinaryTree student) {
         Node newNode = new Node(student);
-        if (first == null) {
+        if (first == null || first.info.getName().compareTo(student.getName()) > 0) {
+            newNode.next = first;
             first = newNode;
         } else {
             Node current = first;
-            while (current.next != null) {
+            while (current.next != null && current.next.info.getName().compareTo(student.getName()) < 0) {
                 current = current.next;
             }
+            newNode.next = current.next;
             current.next = newNode;
         }
     }
@@ -31,6 +34,11 @@ public class Students {
             if (current.next != null) {
                 current.next = current.next.next;
             }
+        }
+        // Eliminar el fitxer associat
+        File file = new File(name + ".txt");
+        if (file.exists()) {
+            file.delete();
         }
     }
 

@@ -85,7 +85,7 @@ public class BinaryTree {
         return root != null ? root.countNodesRecursive() - 1 : 0;
     }
 
-    public int howManyGrandparents() {
+    public int howManyGrandParents() {
         return root != null ? root.countNodesRecursive() - 2 : 0;
     }
 
