@@ -159,11 +159,17 @@ public class BinaryTree {
         private void displayTreeRecursive(int level) {
             if (right != null) {
                 right.displayTreeRecursive(level + 1);
+            } else {
+                printIndent(level + 1);
+                System.out.println("*dead");
             }
             printIndent(level);
             System.out.println(info.getName());
             if (left != null) {
                 left.displayTreeRecursive(level + 1);
+            } else {
+                printIndent(level + 1);
+                System.out.println("*dead");
             }
         }
 
