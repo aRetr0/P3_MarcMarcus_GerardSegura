@@ -23,13 +23,18 @@ public class BinaryTree {
     private NodeA preorderLoad(BufferedReader bur) {
         try {
             String line = bur.readLine();
-            if (line == null || line.trim().isEmpty() || line.equals("*dead")) {
+            System.out.println("Reading line: " + line); // Debugging line
+
+            if (line == null || line.trim().isEmpty() || line.trim().equals("*dead")) {
                 return null;
             }
+
             Person person = new Person(line);
             NodeA node = new NodeA(person);
+
             node.left = preorderLoad(bur);
             node.right = preorderLoad(bur);
+
             return node;
         } catch (IOException e) {
             e.printStackTrace();

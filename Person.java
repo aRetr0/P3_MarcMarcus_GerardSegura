@@ -24,8 +24,9 @@ public class Person {
             throw new IllegalArgumentException("Input string does not have the correct format");
         }
 
-        this.name = parts[0].split(": ")[1];
-        this.placeOfOrigin = parts[1].split(": ")[1];
+        this.name = parts[0].split(": ")[1].trim();
+        this.placeOfOrigin = parts[1].split(": ")[1].trim();
+
         String maritalStatusString = parts[2].split(": ")[1].replace(";", "").trim();
         switch (maritalStatusString.toLowerCase()) {
             case "widowed":
