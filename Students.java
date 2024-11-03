@@ -38,7 +38,9 @@ public class Students {
         // Eliminar el fitxer associat
         File file = new File(name + ".txt");
         if (file.exists()) {
-            file.delete();
+            if (!file.delete()) {
+                System.err.println("Failed to delete the file: " + file.getName());
+            }
         }
     }
 
@@ -60,7 +62,7 @@ public class Students {
         return names;
     }
 
-    private class Node {
+    private static class Node {
         Node next;
         BinaryTree info;
 

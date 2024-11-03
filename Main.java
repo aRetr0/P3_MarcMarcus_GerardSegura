@@ -1,15 +1,12 @@
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
-    private static Students students = new Students();
-    private static Scanner scanner = new Scanner(System.in);
+    private static final Students students = new Students();
+    private static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        readAllStudents("estudiants");
+        readAllStudents();
 
         int option;
         do {
@@ -51,9 +48,9 @@ public class Main {
         System.out.println("Sortint del programa.");
     }
 
-    private static void readAllStudents(String folderPath) {
-        File folder = new File(folderPath);
-        File[] listOfFiles = folder.listFiles((dir, name) -> name.endsWith(".txt"));
+    private static void readAllStudents() {
+        File folder = new File("estudiants");
+        File[] listOfFiles = folder.listFiles((_, name) -> name.endsWith(".txt"));
 
         if (listOfFiles != null) {
             for (File file : listOfFiles) {
@@ -103,9 +100,14 @@ public class Main {
         String name = scanner.nextLine();
         System.out.print("Introdueix el lloc d'origen: ");
         String placeOfOrigin = scanner.nextLine();
-        System.out.print("Introdueix l'estat civil (0: solter, 1: casat, 2: divorciat): ");
+        System.out.print("Introdueix l'estat civil (0: vidu, 1: divorciat, 2: casat, 3: solter): ");
         int maritalStatus = scanner.nextInt();
         scanner.nextLine(); // consume newline
+
+        if (maritalStatus < 0 || maritalStatus > 3) {
+            System.out.println("Estat civil no vàlid.");
+            return;
+        }
 
         Person person = new Person(name, placeOfOrigin, maritalStatus);
         BinaryTree tree = new BinaryTree();
@@ -125,9 +127,15 @@ public class Main {
                 String memberName = scanner.nextLine();
                 System.out.print("Introdueix el lloc d'origen: ");
                 String placeOfOrigin = scanner.nextLine();
-                System.out.print("Introdueix l'estat civil (0: solter, 1: casat, 2: divorciat): ");
+                System.out.print("Introdueix l'estat civil (0: vidu, 1: divorciat, 2: casat, 3: solter): ");
                 int maritalStatus = scanner.nextInt();
                 scanner.nextLine(); // consume newline
+
+                if (maritalStatus < 0 || maritalStatus > 3) {
+                    System.out.println("Estat civil no vàlid.");
+                    return;
+                }
+
                 System.out.print("Introdueix el nivell (L/R): ");
                 String level = scanner.nextLine();
 

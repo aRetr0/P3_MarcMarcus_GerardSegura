@@ -5,7 +5,7 @@ public class Person {
     public static final int SINGLE = 3;
 
     private int maritalStatus;
-    private String placeOfOrigin;
+    private final String placeOfOrigin;
     private String name;
 
     public Person(String name, String placeOfOrigin, int maritalStatus) {
@@ -58,19 +58,14 @@ public class Person {
         return maritalStatus;
     }
 
-    private String getMaritalStatusString() {
-        switch (maritalStatus) {
-            case WIDOWED:
-                return "Widowed";
-            case DIVORCED:
-                return "Divorced";
-            case MARRIED:
-                return "Married";
-            case SINGLE:
-                return "Single";
-            default:
-                throw new IllegalStateException("Invalid marital status: " + maritalStatus);
-        }
+    public String getMaritalStatusString() {
+        return switch (maritalStatus) {
+            case WIDOWED -> "Widowed";
+            case DIVORCED -> "Divorced";
+            case MARRIED -> "Married";
+            case SINGLE -> "Single";
+            default -> throw new IllegalStateException("Invalid marital status: " + maritalStatus);
+        };
     }
 
     @Override

@@ -11,7 +11,7 @@ public class BinaryTree {
         try (BufferedReader bur = new BufferedReader(new FileReader(filename))) {
             root = preorderLoad(bur);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error loading binary tree from file: " + e.getMessage());
             root = null;
         }
     }
@@ -37,17 +37,17 @@ public class BinaryTree {
 
             return node;
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error reading line: " + e.getMessage());
             return null;
         }
     }
 
-    public boolean addNode(Person unaPersona, String level) {
+    public void addNode(Person unaPersona, String level) {
         if (root == null) {
             root = new NodeA(unaPersona);
-            return true;
+            return;
         }
-        return root.addNodeRecursive(unaPersona, level);
+        root.addNodeRecursive(unaPersona, level);
     }
 
     public void displayTree() {
@@ -64,7 +64,7 @@ public class BinaryTree {
         try (BufferedWriter buw = new BufferedWriter(new FileWriter(filename))) {
             root.preorderSaveRecursive(buw);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error saving binary tree to file: " + e.getMessage());
         }
     }
 
@@ -75,7 +75,7 @@ public class BinaryTree {
     }
 
     public boolean isFrom(String place) {
-        return root != null && root.isDescentFromRecursive(place);
+        return root != null && root.info.getPlaceOfOrigin().equals(place);
     }
 
     public boolean isDescentFrom(String name) {
@@ -83,18 +83,36 @@ public class BinaryTree {
     }
 
     public int howManyParents() {
-        return root != null ? root.countNodesRecursive() - 1 : 0;
+        int count = 0;
+        if (root != null) {
+            if (root.left != null) count++;
+            if (root.right != null) count++;
+        }
+        return count;
     }
 
     public int howManyGrandParents() {
-        return root != null ? root.countNodesRecursive() - 2 : 0;
+        int count = 0;
+        if (root != null) {
+            if (root.left != null) {
+                if (root.left.left != null) count++;
+                if (root.left.right != null) count++;
+            }
+            if (root.right != null) {
+                if (root.right.left != null) count++;
+                if (root.right.right != null) count++;
+            }
+        }
+        return count;
     }
 
     public boolean marriedParents() {
-        return root != null && root.left != null && root.right != null && root.left.info.getMaritalStatus() == 2 && root.right.info.getMaritalStatus() == 2;
+        return root != null && root.left != null && root.right != null &&
+                root.left.info.getMaritalStatus() == Person.MARRIED &&
+                root.right.info.getMaritalStatus() == Person.MARRIED;
     }
 
-    private class NodeA {
+    private static class NodeA {
         NodeA right;
         NodeA left;
         Person info;
@@ -126,7 +144,7 @@ public class BinaryTree {
                     buw.newLine();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                System.err.println("Error saving binary tree to file: " + e.getMessage());
             }
         }
 
@@ -159,11 +177,17 @@ public class BinaryTree {
         private void displayTreeRecursive(int level) {
             if (right != null) {
                 right.displayTreeRecursive(level + 1);
+            } else {
+                printIndent(level + 1);
+                System.out.println("*dead");
             }
             printIndent(level);
             System.out.println(info.getName());
             if (left != null) {
                 left.displayTreeRecursive(level + 1);
+            } else {
+                printIndent(level + 1);
+                System.out.println("*dead");
             }
         }
 
