@@ -24,7 +24,7 @@ mostrar informació dels estudiants i les seves famílies.
 
 ## Ús
 
-1. Executa la classe `Main` per iniciar l'aplicació.
+1. Executa la classe `src.Main` per iniciar l'aplicació.
 2. Segueix les instruccions en pantalla per gestionar els estudiants.
 
 ### Opcions del Menú Principal

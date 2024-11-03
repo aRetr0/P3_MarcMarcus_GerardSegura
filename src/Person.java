@@ -1,3 +1,5 @@
+package src;
+
 public class Person {
     public static final int WIDOWED = 0;
     public static final int DIVORCED = 1;
