@@ -23,8 +23,6 @@ public class BinaryTree {
     private NodeA preorderLoad(BufferedReader bur) {
         try {
             String line = bur.readLine();
-            System.out.println("Reading line: " + line); // Debugging line
-
             if (line == null || line.trim().isEmpty() || line.trim().equals("*dead")) {
                 return null;
             }
@@ -78,8 +76,8 @@ public class BinaryTree {
         return root != null && root.info.getPlaceOfOrigin().equals(place);
     }
 
-    public boolean isDescentFrom(String name) {
-        return root != null && root.isDescentFromRecursive(name);
+    public boolean isDescentFrom(String place) {
+        return root != null && root.isDescentFromRecursive(place);
     }
 
     public int howManyParents() {
@@ -119,12 +117,6 @@ public class BinaryTree {
 
         NodeA(Person info) {
             this.info = info;
-        }
-
-        NodeA(Person info, NodeA left, NodeA right) {
-            this.info = info;
-            this.left = left;
-            this.right = right;
         }
 
         private void preorderSaveRecursive(BufferedWriter buw) {
@@ -175,16 +167,16 @@ public class BinaryTree {
         }
 
         private void displayTreeRecursive(int level) {
-            if (right != null) {
-                right.displayTreeRecursive(level + 1);
-            } else {
-                printIndent(level + 1);
-                System.out.println("*dead");
-            }
             printIndent(level);
             System.out.println(info.getName());
             if (left != null) {
                 left.displayTreeRecursive(level + 1);
+            } else {
+                printIndent(level + 1);
+                System.out.println("*dead");
+            }
+            if (right != null) {
+                right.displayTreeRecursive(level + 1);
             } else {
                 printIndent(level + 1);
                 System.out.println("*dead");
@@ -246,17 +238,6 @@ public class BinaryTree {
                 return true;
             }
             return right != null && right.isDescentFromRecursive(place);
-        }
-
-        private int countNodesRecursive() {
-            int count = 1;
-            if (left != null) {
-                count += left.countNodesRecursive();
-            }
-            if (right != null) {
-                count += right.countNodesRecursive();
-            }
-            return count;
         }
     }
 }
