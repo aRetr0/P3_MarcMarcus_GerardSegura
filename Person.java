@@ -70,6 +70,6 @@ public class Person {
 
     @Override
     public String toString() {
-        return "Name: " + name + ", Place of Origin: " + placeOfOrigin + ", Marital Status: " + getMaritalStatusString();
+        return "Name: " + name + ", place of Origin: " + placeOfOrigin + ", marital status: " + getMaritalStatusString();
     }
 }

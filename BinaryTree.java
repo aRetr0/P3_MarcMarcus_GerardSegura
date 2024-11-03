@@ -23,17 +23,29 @@ public class BinaryTree {
     private NodeA preorderLoad(BufferedReader bur) {
         try {
             String line = bur.readLine();
-            System.out.println("Reading line: " + line); // Debugging line
-
-            if (line == null || line.trim().isEmpty() || line.trim().equals("*dead")) {
+            if (line == null) {
                 return null;
+            }
+            if (line.trim().isEmpty()) {
+                NodeA deadNode = new NodeA(null);
+                deadNode.left = preorderLoad(bur);
+                deadNode.right = preorderLoad(bur);
+                return deadNode;
             }
 
             Person person = new Person(line);
             NodeA node = new NodeA(person);
 
-            node.left = preorderLoad(bur);
-            node.right = preorderLoad(bur);
+            if (line.contains("; ;")) {
+                node.left = null;
+                node.right = null;
+            } else if (line.contains(";")) {
+                node.left = preorderLoad(bur);
+                node.right = null;
+            } else {
+                node.left = preorderLoad(bur);
+                node.right = preorderLoad(bur);
+            }
 
             return node;
         } catch (IOException e) {
@@ -60,7 +72,7 @@ public class BinaryTree {
         if (root == null) {
             throw new IllegalStateException("The tree is empty.");
         }
-        String filename = root.info.getName() + ".txt";
+        String filename = "estudiants/" + root.info.getName() + ".txt";
         try (BufferedWriter buw = new BufferedWriter(new FileWriter(filename))) {
             root.preorderSaveRecursive(buw);
         } catch (IOException e) {
@@ -78,15 +90,15 @@ public class BinaryTree {
         return root != null && root.info.getPlaceOfOrigin().equals(place);
     }
 
-    public boolean isDescentFrom(String name) {
-        return root != null && root.isDescentFromRecursive(name);
+    public boolean isDescentFrom(String place) {
+        return root != null && root.isDescentFromRecursive(place);
     }
 
     public int howManyParents() {
         int count = 0;
         if (root != null) {
-            if (root.left != null) count++;
-            if (root.right != null) count++;
+            if (root.left != null && root.left.info != null) count++;
+            if (root.right != null && root.right.info != null) count++;
         }
         return count;
     }
@@ -107,9 +119,7 @@ public class BinaryTree {
     }
 
     public boolean marriedParents() {
-        return root != null && root.left != null && root.right != null &&
-                root.left.info.getMaritalStatus() == Person.MARRIED &&
-                root.right.info.getMaritalStatus() == Person.MARRIED;
+        return root != null && root.left != null && root.right != null && root.left.info.getMaritalStatus() == Person.MARRIED && root.right.info.getMaritalStatus() == Person.MARRIED;
     }
 
     private static class NodeA {
@@ -121,30 +131,25 @@ public class BinaryTree {
             this.info = info;
         }
 
-        NodeA(Person info, NodeA left, NodeA right) {
-            this.info = info;
-            this.left = left;
-            this.right = right;
-        }
-
-        private void preorderSaveRecursive(BufferedWriter buw) {
-            try {
+        private void preorderSaveRecursive(BufferedWriter buw) throws IOException {
+            if (info != null) {
                 buw.write(info.toString());
+                if (left == null && right == null) {
+                    buw.write("; ;");
+                } else if (right == null) {
+                    buw.write(";");
+                }
                 buw.newLine();
-                if (left != null) {
-                    left.preorderSaveRecursive(buw);
-                } else {
-                    buw.write("*dead");
-                    buw.newLine();
-                }
-                if (right != null) {
-                    right.preorderSaveRecursive(buw);
-                } else {
-                    buw.write("*dead");
-                    buw.newLine();
-                }
-            } catch (IOException e) {
-                System.err.println("Error saving binary tree to file: " + e.getMessage());
+            } else {
+                buw.newLine();
+            }
+
+            if (left != null) {
+                left.preorderSaveRecursive(buw);
+            }
+
+            if (right != null) {
+                right.preorderSaveRecursive(buw);
             }
         }
 
@@ -175,19 +180,14 @@ public class BinaryTree {
         }
 
         private void displayTreeRecursive(int level) {
-            if (right != null) {
-                right.displayTreeRecursive(level + 1);
-            } else {
-                printIndent(level + 1);
-                System.out.println("*dead");
-            }
             printIndent(level);
-            System.out.println(info.getName());
+            if (info != null) System.out.println(info.getName());
+            else System.out.println("*dead");
             if (left != null) {
                 left.displayTreeRecursive(level + 1);
-            } else {
-                printIndent(level + 1);
-                System.out.println("*dead");
+            }
+            if (right != null) {
+                right.displayTreeRecursive(level + 1);
             }
         }
 
@@ -239,24 +239,13 @@ public class BinaryTree {
         }
 
         private boolean isDescentFromRecursive(String place) {
-            if (info.getPlaceOfOrigin().equals(place)) {
+            if (info != null && info.getPlaceOfOrigin().equals(place)) {
                 return true;
             }
             if (left != null && left.isDescentFromRecursive(place)) {
                 return true;
             }
             return right != null && right.isDescentFromRecursive(place);
-        }
-
-        private int countNodesRecursive() {
-            int count = 1;
-            if (left != null) {
-                count += left.countNodesRecursive();
-            }
-            if (right != null) {
-                count += right.countNodesRecursive();
-            }
-            return count;
         }
     }
 }
